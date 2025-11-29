@@ -2,7 +2,7 @@ import Cooking from "../../../component/Cooking/Cooking"
 import Menu from "../../../component/Menu/Menu"
 import { Testimonials } from "../../../component/Testimonials/Testimonials"
 import Banner from "../Banner/Banner"
-import Category from "../category/category"
+import Category from "../Category/Category"
 
 import PopularMenu from "../PopularMenu/PopularMenu"
 
@@ -10,8 +10,7 @@ const Home = () => {
   return (
     <div>
       <Banner></Banner>
-      
-      <Category></Category>
+      <Category/>
       <Cooking/>
       <PopularMenu/>
       <Menu/>
