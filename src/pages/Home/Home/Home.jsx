@@ -3,6 +3,7 @@ import Menu from "../../../component/Menu/Menu"
 import { Testimonials } from "../../../component/Testimonials/Testimonials"
 import Banner from "../Banner/Banner"
 import Category from "../category/category"
+
 import PopularMenu from "../PopularMenu/PopularMenu"
 
 const Home = () => {
