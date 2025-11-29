@@ -125,10 +125,10 @@ export const NavbarLogo = () => (
       width={28}
       height={28}
     />
-    <div className="leading-3">
+    <Link to="/" className="leading-3 block">
       <div className="font-bold text-sm">BISTRO BOSS</div>
       <div className="text-[10px]">RESTAURANT</div>
-    </div>
+    </Link>
   </Link>
 );
 
