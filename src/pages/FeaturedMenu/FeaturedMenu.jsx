@@ -37,7 +37,7 @@ const FeaturedMenu = () => {
         subHeading="---Popular Items---" 
       />
 
-      <section className="py-20">
+      <section className=" mb-6">
         <div className="max-w-7xl mx-auto px-4">
           <Swiper
             slidesPerView={1}

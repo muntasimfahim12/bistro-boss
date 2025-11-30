@@ -2,6 +2,7 @@ import Cooking from "../../../component/Cooking/Cooking"
 import Menu from "../../../component/Menu/Menu"
 import { Testimonials } from "../../../component/Testimonials/Testimonials"
 import FeaturedMenu from "../../FeaturedMenu/FeaturedMenu"
+import Cart from "../../Shared/Cart/Cart"
 import Banner from "../Banner/Banner"
 import PopularMenu from "../PopularMenu/PopularMenu"
 
@@ -12,6 +13,7 @@ const Home = () => {
       <FeaturedMenu></FeaturedMenu>
       <Cooking />
       <PopularMenu />
+      <Cart></Cart>
       <Menu />
       <Testimonials></Testimonials>
 

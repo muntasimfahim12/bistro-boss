@@ -1,32 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { FaQuoteLeft, FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa";
 
-const reviews = [
-  {
-    quote: "Various version have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like). It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
-    name: "Jane Doe",
-    rating: 4,
-  },
-  {
-    quote: "Amazing product, exceeded expectations! The team was very responsive and helpful throughout.",
-    name: "John Smith",
-    rating: 5,
-  },
-  {
-    quote: "A smooth and seamless experience. Highly recommended to anyone looking for quality service.",
-    name: "Alice Johnson",
-    rating: 5,
-  },
-];
-
 const transition = { type: "spring", duration: 0.6 };
 
 export const Testimonials = () => {
+  const [reviews, setReviews] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Fetch reviews from public folder
+  useEffect(() => {
+    fetch("/reviews.json")
+      .then((res) => res.json())
+      .then((data) => setReviews(data))
+      .catch((err) => console.error("Review Fetch Error:", err));
+  }, []);
+
   const total = reviews.length;
-  const { quote, name, rating } = reviews[currentIndex];
+
+  // Safety Guard
+  if (total === 0) {
+    return (
+      <section className="py-16 bg-white text-center">
+        <p className="text-gray-500">Loading testimonials...</p>
+      </section>
+    );
+  }
+
+  // Destructure current review
+  const { name, details, rating } = reviews[currentIndex];
 
   const next = () => setCurrentIndex((prev) => (prev + 1) % total);
   const prev = () => setCurrentIndex((prev) => (prev - 1 + total) % total);
@@ -34,12 +37,14 @@ export const Testimonials = () => {
   return (
     <section className="py-16 bg-white flex justify-center items-center">
       <div className="max-w-2xl w-full text-center relative px-4 md:px-0">
-        <p className="text-yellow-600 text-sm mb-2">---What Our Clients Say---</p>
+        <p className="text-yellow-600 text-sm mb-2">
+          ---What Our Clients Say---
+        </p>
         <h2 className="text-3xl font-semibold mb-4">TESTIMONIALS</h2>
 
         {/* Stars */}
         <div className="flex justify-center gap-1 mb-6">
-          {Array.from({ length: 5 }).map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <FaStar
               key={i}
               className={`w-5 h-5 ${i < rating ? "text-yellow-500" : "text-gray-300"}`}
@@ -47,16 +52,17 @@ export const Testimonials = () => {
           ))}
         </div>
 
-        {/* Quote and text */}
+        {/* Review Animation */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0, transition }}
             exit={{ opacity: 0, x: -50, transition }}
+            className="px-4"
           >
             <FaQuoteLeft className="mx-auto text-4xl text-gray-800 mb-4" />
-            <p className="text-gray-700 text-md md:text-lg mb-4">{quote}</p>
+            <p className="text-gray-700 text-md md:text-lg mb-4">{details}</p>
             <p className="text-yellow-600 font-semibold">{name}</p>
           </motion.div>
         </AnimatePresence>
