@@ -1,5 +1,5 @@
 import Cooking from "../../../component/Cooking/Cooking"
-import Menu from "../../../component/Menu/Menu"
+import Menu from "../../../component/FromMenu/FromMenu"
 import { Testimonials } from "../../../component/Testimonials/Testimonials"
 import FeaturedMenu from "../../FeaturedMenu/FeaturedMenu"
 import Cart from "../../Shared/Cart/Cart"
@@ -20,5 +20,5 @@ const Home = () => {
     </div>
   )
 }
- 
+
 export default Home

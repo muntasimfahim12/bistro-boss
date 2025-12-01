@@ -32,9 +32,9 @@ const FeaturedMenu = () => {
 
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white">
-      <SectionTitle 
-        heading="From Our Menu" 
-        subHeading="---Popular Items---" 
+      <SectionTitle
+        heading="From Our Menu"
+        subHeading="---Popular Items---"
       />
 
       <section className=" mb-6">

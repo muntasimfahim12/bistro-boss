@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import menu from "../../assets/home/featured.jpg";
 
-const Menu = () => {
+const FromMenu = () => {
   return (
     <section className="relative py-28 bg-black overflow-hidden">
       {/* Background Image */}
@@ -61,4 +61,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default FromMenu;

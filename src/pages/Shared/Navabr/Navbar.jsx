@@ -163,10 +163,11 @@ export default function BlackProfessionalNavbar() {
 
   const menu = [
     { name: "HOME", link: "/" },
-    { name: "CONTACT", link: "/contact" },
-    { name: "DASHBOARD", link: "/dashboard" },
     { name: "MENU", link: "/menu" },
     { name: "SHOP", link: "/shop" },
+    { name: "Order Food", link: "/order" },
+    { name: "CONTACT", link: "/contact" },
+
   ];
 
   return (
