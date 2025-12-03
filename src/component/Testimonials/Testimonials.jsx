@@ -8,19 +8,30 @@ const transition = { type: "spring", duration: 0.6 };
 export const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch reviews from public folder
   useEffect(() => {
-    fetch("/reviews.json")
-      .then((res) => res.json())
-      .then((data) => setReviews(data))
-      .catch((err) => console.error("Review Fetch Error:", err));
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/reviews`);
+        if (!res.ok) throw new Error("Failed to fetch reviews");
+        const data = await res.json();
+        setReviews(data);
+      } catch (err) {
+        console.error("Review Fetch Error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
   }, []);
 
   const total = reviews.length;
 
-  // Safety Guard
-  if (total === 0) {
+  if (loading) {
     return (
       <section className="py-16 bg-white text-center">
         <p className="text-gray-500">Loading testimonials...</p>
@@ -28,7 +39,22 @@ export const Testimonials = () => {
     );
   }
 
-  // Destructure current review
+  if (error) {
+    return (
+      <section className="py-16 bg-white text-center">
+        <p className="text-red-500">Error: {error}</p>
+      </section>
+    );
+  }
+
+  if (total === 0) {
+    return (
+      <section className="py-16 bg-white text-center">
+        <p className="text-gray-500">No testimonials available.</p>
+      </section>
+    );
+  }
+
   const { name, details, rating } = reviews[currentIndex];
 
   const next = () => setCurrentIndex((prev) => (prev + 1) % total);
@@ -37,9 +63,7 @@ export const Testimonials = () => {
   return (
     <section className="py-16 bg-white flex justify-center items-center">
       <div className="max-w-2xl w-full text-center relative px-4 md:px-0">
-        <p className="text-yellow-600 text-sm mb-2">
-          ---What Our Clients Say---
-        </p>
+        <p className="text-yellow-600 text-sm mb-2">---What Our Clients Say---</p>
         <h2 className="text-3xl font-semibold mb-4">TESTIMONIALS</h2>
 
         {/* Stars */}

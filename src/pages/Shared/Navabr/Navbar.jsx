@@ -5,9 +5,9 @@ import { IconMenu2, IconX } from "@tabler/icons-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import { ShoppingCart } from "lucide-react";
 
-// Dummy Auth Context
+// ================= DUMMY AUTH CONTEXT =================
 const AuthContext = React.createContext({
-  user: { displayName: "Demo User", photoURL: "" },
+  user: null,
   logOut: () => console.log("Logging out...")
 });
 
@@ -24,10 +24,7 @@ export const Navbar = ({ children }) => {
   });
 
   return (
-    <motion.div
-      ref={ref}
-      className="fixed inset-x-0 top-0 z-50 w-full"
-    >
+    <motion.div ref={ref} className="fixed inset-x-0 top-0 z-50 w-full">
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(child, { scrolled })
@@ -62,12 +59,12 @@ export const NavBody = ({ children, scrolled }) => (
   </motion.div>
 );
 
-// ================= NAV ITEMS =================
+// ================= NAV ITEMS (✅ FIXED) =================
 export const NavItems = ({ items = [] }) => {
   const [hovered, setHovered] = useState(null);
 
   return (
-    <div className="absolute inset-0 hidden lg:flex items-center justify-center space-x-3 text-[13px] font-medium tracking-widest">
+    <div className="hidden lg:flex items-center justify-center space-x-3 text-[13px] font-medium tracking-widest">
       {items.map((item, idx) => (
         <NavLink
           key={idx}
@@ -76,9 +73,7 @@ export const NavItems = ({ items = [] }) => {
           className={({ isActive }) =>
             cn(
               "relative px-5 py-2 rounded-full transition-all duration-300",
-              isActive
-                ? "text-yellow-400"
-                : "text-white hover:text-yellow-300"
+              isActive ? "text-yellow-400" : "text-white hover:text-yellow-300"
             )
           }
         >
@@ -95,7 +90,7 @@ export const NavItems = ({ items = [] }) => {
   );
 };
 
-// ================= MOBILE NAVBAR =================
+// ================= MOBILE NAV =================
 export const MobileNav = ({ children, scrolled }) => (
   <motion.div
     animate={{
@@ -132,7 +127,8 @@ export const MobileNavMenu = ({ children, isOpen }) => (
 );
 
 export const MobileNavToggle = ({ isOpen, onClick }) =>
-  isOpen ? <IconX onClick={onClick} /> : <IconMenu2 onClick={onClick} />;
+  isOpen ? <IconX onClick={onClick} className="cursor-pointer" /> 
+         : <IconMenu2 onClick={onClick} className="cursor-pointer" />;
 
 // ================= LOGO =================
 export const NavbarLogo = () => (
@@ -141,7 +137,6 @@ export const NavbarLogo = () => (
       src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/dummyLogo/dummyLogoColored.svg"
       alt="logo"
       width={30}
-      height={30}
     />
     <div className="leading-3">
       <div className="font-bold text-sm tracking-wider">BISTRO BOSS</div>
@@ -165,9 +160,8 @@ export default function BlackProfessionalNavbar() {
     { name: "HOME", link: "/" },
     { name: "MENU", link: "/menu" },
     { name: "SHOP", link: "/shop" },
-    { name: "Order Food", link: "/order" },
-    { name: "CONTACT", link: "/contact" },
-
+    { name: "ORDER FOOD", link: "/order" },
+    { name: "CONTACT", link: "/contact" }
   ];
 
   return (
@@ -177,13 +171,41 @@ export default function BlackProfessionalNavbar() {
         <NavbarLogo />
         <NavItems items={menu} />
 
-        <div className="flex items-center gap-5">
+        {/* ✅ z-50 ADDED HERE */}
+        <div className="relative z-50 flex items-center gap-5">
+          {/* Cart */}
           <div className="relative hidden md:flex cursor-pointer hover:scale-105 transition">
             <ShoppingCart size={18} />
             <span className="absolute -top-2 -right-2 bg-red-500 text-[9px] text-white rounded-full px-1.5">
               3
             </span>
           </div>
+
+          {/* Auth Buttons */}
+          {!user ? (
+            <div className="flex items-center gap-3">
+              <NavLink
+                to="/login"
+                className="px-5 py-2 rounded-full border border-white/20 text-xs tracking-widest hover:bg-white hover:text-black transition"
+              >
+                LOGIN
+              </NavLink>
+
+              <NavLink
+                to="/signup"
+                className="px-5 py-2 rounded-full bg-yellow-400 text-black text-xs tracking-widest font-semibold hover:bg-yellow-500 transition shadow-md"
+              >
+                SIGN UP
+              </NavLink>
+            </div>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="px-5 py-2 rounded-full bg-red-500 text-white text-xs tracking-widest hover:bg-red-600 transition"
+            >
+              LOGOUT
+            </button>
+          )}
         </div>
       </NavBody>
 
@@ -209,12 +231,30 @@ export default function BlackProfessionalNavbar() {
             </NavLink>
           ))}
 
-          {user && (
+          {!user ? (
+            <div className="flex flex-col gap-2 mt-4">
+              <NavLink
+                to="/login"
+                onClick={() => setMobileOpen(false)}
+                className="w-full text-center py-2 rounded-lg border text-xs font-semibold"
+              >
+                LOGIN
+              </NavLink>
+
+              <NavLink
+                to="/signup"
+                onClick={() => setMobileOpen(false)}
+                className="w-full text-center py-2 rounded-lg bg-yellow-400 text-black text-xs font-semibold"
+              >
+                SIGN UP
+              </NavLink>
+            </div>
+          ) : (
             <button
               onClick={handleLogout}
-              className="mt-3 text-red-500 text-xs font-semibold"
+              className="mt-4 w-full py-2 rounded-lg bg-red-500 text-white text-xs font-semibold"
             >
-              Logout
+              LOGOUT
             </button>
           )}
         </MobileNavMenu>
