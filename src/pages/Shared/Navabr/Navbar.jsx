@@ -4,12 +4,7 @@ import { IconMenu2, IconX } from "@tabler/icons-react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import { ShoppingCart } from "lucide-react";
-
-// ================= DUMMY AUTH CONTEXT =================
-const AuthContext = React.createContext({
-  user: null,
-  logOut: () => console.log("Logging out...")
-});
+import { AuthContext } from "../../../provider/AuthProvider"; // firebase AuthProvider
 
 const cn = (...args) => args.filter(Boolean).join(" ");
 
@@ -39,13 +34,9 @@ export const NavBody = ({ children, scrolled }) => (
   <motion.div
     animate={{
       height: scrolled ? 64 : 88,
-      backgroundColor: scrolled
-        ? "rgba(10,10,10,0.85)"
-        : "rgba(0,0,0,0.45)",
+      backgroundColor: scrolled ? "rgba(10,10,10,0.85)" : "rgba(0,0,0,0.45)",
       backdropFilter: scrolled ? "blur(12px)" : "blur(4px)",
-      boxShadow: scrolled
-        ? "0 10px 30px rgba(0,0,0,0.25)"
-        : "0 4px 12px rgba(0,0,0,0.1)",
+      boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.25)" : "0 4px 12px rgba(0,0,0,0.1)",
       borderBottom: scrolled
         ? "1px solid rgba(255,255,255,0.08)"
         : "1px solid transparent"
@@ -59,7 +50,7 @@ export const NavBody = ({ children, scrolled }) => (
   </motion.div>
 );
 
-// ================= NAV ITEMS (✅ FIXED) =================
+// ================= NAV ITEMS =================
 export const NavItems = ({ items = [] }) => {
   const [hovered, setHovered] = useState(null);
 
@@ -94,9 +85,7 @@ export const NavItems = ({ items = [] }) => {
 export const MobileNav = ({ children, scrolled }) => (
   <motion.div
     animate={{
-      backgroundColor: scrolled
-        ? "rgba(10,10,10,0.92)"
-        : "rgba(0,0,0,0.65)"
+      backgroundColor: scrolled ? "rgba(10,10,10,0.92)" : "rgba(0,0,0,0.65)"
     }}
     className="lg:hidden w-full text-white shadow-xl"
   >
@@ -105,9 +94,7 @@ export const MobileNav = ({ children, scrolled }) => (
 );
 
 export const MobileNavHeader = ({ children }) => (
-  <div className="flex w-full items-center justify-between px-4 py-3">
-    {children}
-  </div>
+  <div className="flex w-full items-center justify-between px-4 py-3">{children}</div>
 );
 
 export const MobileNavMenu = ({ children, isOpen }) => (
@@ -130,7 +117,6 @@ export const MobileNavToggle = ({ isOpen, onClick }) =>
   isOpen ? <IconX onClick={onClick} className="cursor-pointer" /> 
          : <IconMenu2 onClick={onClick} className="cursor-pointer" />;
 
-// ================= LOGO =================
 export const NavbarLogo = () => (
   <Link to="/" className="flex items-center space-x-2 text-xs font-medium text-white">
     <img
@@ -147,19 +133,23 @@ export const NavbarLogo = () => (
 
 // ================= MAIN NAVBAR =================
 export default function BlackProfessionalNavbar() {
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logoutUser } = useContext(AuthContext); // correct Firebase logout
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
-    await logOut();
-    navigate("/login");
+    try {
+      await logoutUser();
+      navigate("/login");
+    } catch (err) {
+      console.log("Logout failed:", err);
+    }
   };
 
   const menu = [
     { name: "HOME", link: "/" },
     { name: "MENU", link: "/menu" },
-    { name: "SHOP", link: "/shop" },
+    { name: "SECRET", link: "/secret" },
     { name: "ORDER FOOD", link: "/order" },
     { name: "CONTACT", link: "/contact" }
   ];
@@ -171,8 +161,8 @@ export default function BlackProfessionalNavbar() {
         <NavbarLogo />
         <NavItems items={menu} />
 
-        {/* ✅ z-50 ADDED HERE */}
         <div className="relative z-50 flex items-center gap-5">
+
           {/* Cart */}
           <div className="relative hidden md:flex cursor-pointer hover:scale-105 transition">
             <ShoppingCart size={18} />
@@ -181,30 +171,21 @@ export default function BlackProfessionalNavbar() {
             </span>
           </div>
 
-          {/* Auth Buttons */}
-          {!user ? (
-            <div className="flex items-center gap-3">
-              <NavLink
-                to="/login"
-                className="px-5 py-2 rounded-full border border-white/20 text-xs tracking-widest hover:bg-white hover:text-black transition"
-              >
-                LOGIN
-              </NavLink>
-
-              <NavLink
-                to="/signup"
-                className="px-5 py-2 rounded-full bg-yellow-400 text-black text-xs tracking-widest font-semibold hover:bg-yellow-500 transition shadow-md"
-              >
-                SIGN UP
-              </NavLink>
-            </div>
-          ) : (
+          {/* AUTH DESKTOP */}
+          {user ? (
             <button
               onClick={handleLogout}
               className="px-5 py-2 rounded-full bg-red-500 text-white text-xs tracking-widest hover:bg-red-600 transition"
             >
               LOGOUT
             </button>
+          ) : (
+            <NavLink
+              to="/login"
+              className="px-5 py-2 rounded-full border border-white/20 text-xs tracking-widest hover:bg-white hover:text-black transition"
+            >
+              LOGIN
+            </NavLink>
           )}
         </div>
       </NavBody>
@@ -231,31 +212,22 @@ export default function BlackProfessionalNavbar() {
             </NavLink>
           ))}
 
-          {!user ? (
-            <div className="flex flex-col gap-2 mt-4">
-              <NavLink
-                to="/login"
-                onClick={() => setMobileOpen(false)}
-                className="w-full text-center py-2 rounded-lg border text-xs font-semibold"
-              >
-                LOGIN
-              </NavLink>
-
-              <NavLink
-                to="/signup"
-                onClick={() => setMobileOpen(false)}
-                className="w-full text-center py-2 rounded-lg bg-yellow-400 text-black text-xs font-semibold"
-              >
-                SIGN UP
-              </NavLink>
-            </div>
-          ) : (
+          {/* AUTH MOBILE */}
+          {user ? (
             <button
-              onClick={handleLogout}
+              onClick={() => { handleLogout(); setMobileOpen(false); }}
               className="mt-4 w-full py-2 rounded-lg bg-red-500 text-white text-xs font-semibold"
             >
               LOGOUT
             </button>
+          ) : (
+            <NavLink
+              to="/login"
+              onClick={() => setMobileOpen(false)}
+              className="mt-4 w-full text-center py-2 rounded-lg border text-xs font-semibold"
+            >
+              LOGIN
+            </NavLink>
           )}
         </MobileNavMenu>
       </MobileNav>
